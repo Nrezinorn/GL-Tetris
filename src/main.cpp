@@ -68,7 +68,6 @@ int main(int argc, char* args[]) {
       glVertex2f(0.5f, -0.5f);
     glEnd();
     glPopMatrix();
- 
 
     glRasterPos2i(0,0);
     glColor3f(0.f, 1.f, 0.f);  // white
