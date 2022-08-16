@@ -18,5 +18,8 @@ TBD - I dont have this project building on OSX yet.  I use the SDL DMG and insta
 ## Linux
 Use your package manager to install the packages we use for windows builds:  Freetype2, SDL, SDL_Mixer.  Once I have this setup there will be a Makefile for builds.
 
+## Libraries
+freetype font rendering uses the "hacked" nehe lesson 34 from here [https://users.cs.northwestern.edu/~sco590/fonts_tutorial.html]
+
 # Bugs
-- `7/30/2022` Freetype Font rendering currently does not work properly.
+-  `7/30/2022` ~~Freetype Font rendering currently does not work properly~~
