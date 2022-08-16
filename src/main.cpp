@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h> //not osx happy
 #include <SDL2/SDL_opengl.h> 
+#include "freetype.h"
+
 #include <gl\gl.h>			// Header File For The OpenGL32 Library
 //#include <gl\glu.h>			// Header File For The GLu32 Library
 //#include <gl\glaux.h>		// Header File For The GLaux Library
@@ -45,6 +47,10 @@ int main(int argc, char* args[]) {
      0.0f,  0.5f, 0.0f
     }; 
 
+
+    freetype_mod::font_data myfont;
+    myfont.init("courier.ttf", 16);
+
     while(running){
       SDL_Event event;
       while(SDL_PollEvent(&event)) {
@@ -72,7 +78,7 @@ int main(int argc, char* args[]) {
     glRasterPos2i(0,0);
     glColor3f(0.f, 1.f, 0.f);  // white
     glDisable(GL_DEPTH_TEST);
-    glPrint("ABCDabcd1234!@#$");
+    freetype_mod::print(myfont, "ABCDabcd1234!@#$");
     glEnable(GL_DEPTH_TEST);
        
     SDL_GL_SwapWindow(gWindow);
