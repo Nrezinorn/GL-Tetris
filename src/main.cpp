@@ -2,11 +2,7 @@
 #include <SDL2/SDL_opengl.h> 
 #include "freetype.h"
 
-#include <gl\gl.h>			// Header File For The OpenGL32 Library
-//#include <gl\glu.h>			// Header File For The GLu32 Library
-//#include <gl\glaux.h>		// Header File For The GLaux Library
-//#include <glfw\glfw3.h>
-#include <gl\glut.h>
+#include "Tetris/Tetris.hpp"
 #include <algorithm>
 #include <iostream>
 
@@ -15,6 +11,7 @@ SDL_Renderer* gRenderer = NULL;
 SDL_Window* gWindow = NULL;
 
 int running = true;
+
 
 int main(int argc, char* args[]) {
     // init SDL, everything!
@@ -41,6 +38,8 @@ int main(int argc, char* args[]) {
     // if the current context on our window fails, clean up and exit
     if(!SDL_GL_MakeCurrent(gWindow, g_ctx) < 0) running=false;  
 
+    Tetris game;
+
      float vertices[] = {
     -0.5f, -0.5f, 0.0f,
      0.5f, -0.5f, 0.0f,
@@ -48,8 +47,8 @@ int main(int argc, char* args[]) {
     }; 
 
 
-    freetype_mod::font_data myfont;
-    myfont.init("courier.ttf", 16);
+    //freetype_mod::font_data myfont;
+    //myfont.init("courier.ttf", 16);
 
     while(running){
       SDL_Event event;
@@ -61,6 +60,10 @@ int main(int argc, char* args[]) {
           break;
         }
       }
+      game.draw();
+      //game.Update();
+
+    /*  
     glClearColor(0,0,0,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	  glLoadIdentity();
@@ -80,11 +83,13 @@ int main(int argc, char* args[]) {
     glDisable(GL_DEPTH_TEST);
     freetype_mod::print(myfont, "ABCDabcd1234!@#$");
     glEnable(GL_DEPTH_TEST);
-       
+    */
+    
     SDL_GL_SwapWindow(gWindow);
     SDL_Delay(200);
     }
 
+    //myfont.clean();
     // destroy context, renderer, and window
     SDL_GL_DeleteContext(g_ctx);  
     SDL_DestroyRenderer(gRenderer);
