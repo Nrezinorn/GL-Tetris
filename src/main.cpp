@@ -61,7 +61,7 @@ int main(int argc, char* args[]) {
         }
       }
       game.draw();
-      //game.Update();
+      game.Update();
 
     /*  
     glClearColor(0,0,0,1);

@@ -10,6 +10,9 @@
 #include <time.h>			// Computer clock access (for randomization)
 #include <fstream>		// File IO (high scores)
 
+//GL Helpers
+#include "../GL_Base.hpp"
+
 // related game bits
 #include "Block.h"		// Block def
 #include "Piece.h"		// Piece def
@@ -45,6 +48,7 @@ struct highScoreData
 	char highType[2];
 };
 
+bool	keys[256];					// Array Used For The Keyboard Routine
 
 class Tetris
 {
@@ -182,7 +186,6 @@ Tetris::Tetris()
 
 	// Load high scores
 	fstream inStream("highscores.txt", ios::in);
-
 	if (!inStream.fail())
 	{
 		for (int i = 0; i < 3; i++)
@@ -198,6 +201,7 @@ Tetris::Tetris()
 	inStream.close();
 
 	myfont.init("courier.ttf", 16);
+	InitGL();
  	//InitAudio();
 }
 
@@ -236,9 +240,50 @@ Tetris::~Tetris()
 	myfont.clean();
 }
 
+void Tetris::ColorizePieces()
+{
+	switch (piece->type)
+	{
+	case Z:
+	case L:
+		piece->setColor(colorScheme[0]);
+		break;
+
+	case Z2:
+	case L2:
+		piece->setColor(colorScheme[1]);
+		break;
+
+	case Line:
+	case Cube:
+	case T:
+		piece->setColor(colorScheme[2]);
+		break;
+	}
+
+	switch (nextPiece->type)
+	{
+	case Z:
+	case L:
+		nextPiece->setColor(colorScheme[0]);
+		break;
+
+	case Z2:
+	case L2:
+		nextPiece->setColor(colorScheme[1]);
+		break;
+
+	case Line:
+	case Cube:
+	case T:
+		nextPiece->setColor(colorScheme[2]);
+		break;
+	}
+}
+
 void Tetris::draw()
 {
-	//glClearColor(0,0,0,1);
+	glClearColor(0,0,0,1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
@@ -246,10 +291,11 @@ void Tetris::draw()
 	{
 	case STATE_INTRO:
 		DrawIntro();
+		//DrawMainMenu();
 		break;
 
 	case STATE_MAINMENU:
-		//DrawMainMenu();
+		DrawMainMenu();
 		break;
 
 	case STATE_OPTIONS:
@@ -319,6 +365,511 @@ void Tetris::DrawIntro()
 	glRasterPos2f (-0.7f, -0.8f);
 	freetype_mod::print(myfont,"SDL Port by Jim Gorz (c) 2022");
 
+}
+
+void Tetris::DrawMainMenu()
+{
+	glTranslatef (0.0f, 4.0f, -40.0f);
+	menuBlock->draw();
+	glLoadIdentity();
+
+	//glTranslatef (0.0f, 0.0f, -4.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glRasterPos2f (-0.20f, 0.5f);
+	freetype_mod::print(myfont,"Tetris");
+
+	glLoadIdentity();
+	//glTranslatef (-0.3f, -2.0f, -8.0f);
+	menu->draw();
+}
+
+void Tetris::LineCheck ()
+{
+	bool lineFull;
+
+	for (int r = 0; r < blocksPerCol; r++)
+	{
+		lineFull = true;
+		for (int c = 0; c < blocksPerRow; c++)
+			if (!grid->blocks[r][c])
+			{
+				lineFull = false;
+				break;
+			}
+
+		if (lineFull)
+			fullLines[numFullLines++] = r;
+	}
+
+	// If no complete lines, skip this stuff
+	if (numFullLines > 0)
+	{
+		if (numFullLines < 4)
+			// Play sound
+			//->PlaySegmentEx( pSound[LINE_KILL], NULL, 
+			//								NULL, DMUS_SEGF_SECONDARY, 
+			//								0, NULL, NULL, NULL );
+			int foo;
+		else
+			// Play sound
+//			pPerformance->PlaySegmentEx( pSound[TETRIS], NULL, 
+//											NULL, DMUS_SEGF_SECONDARY, 
+//											0, NULL, NULL, NULL );
+			int foo;
+
+		switch (numFullLines)
+		{
+		case 1:
+			score += 100 * (level + 1);
+			break;
+		case 2:
+			score += 300 * (level + 1);
+			break;
+		case 3:
+			score += 600 * (level + 1);
+			break;
+		case 4:
+			score += 1000 * (level + 1);
+			break;
+		}
+
+		lines += numFullLines;
+
+		linesAwaitingClear = true;
+
+		delete timer;
+		timer = new RTimer(60);
+	}
+}
+
+void Tetris::MainMenuEventHandler ()
+{
+	if (keys[SDL_SCANCODE_DOWN])
+	{
+		keys[SDL_SCANCODE_DOWN] = FALSE;
+
+		// Play sound
+		//pPerformance->PlaySegmentEx( pSound[MENU_MOVE], NULL, 
+		//									NULL, DMUS_SEGF_SECONDARY, 
+		//									0, NULL, NULL, NULL );
+
+		menu->setSelectedOp(menu->getSelectedOp() < menu->getNumOps() - 1 ? menu->getSelectedOp() + 1 : 0);
+	}
+
+	if (keys[SDL_SCANCODE_UP])
+	{
+		keys[SDL_SCANCODE_UP] = FALSE;
+
+		// Play sound
+		//pPerformance->PlaySegmentEx( pSound[MENU_MOVE], NULL, 
+		//									NULL, DMUS_SEGF_SECONDARY, 
+		//									0, NULL, NULL, NULL );
+
+		menu->setSelectedOp(menu->getSelectedOp() > 0 ? menu->getSelectedOp() - 1 : menu->getNumOps() - 1);
+	}
+
+	if (keys[SDL_SCANCODE_RETURN])
+	{
+		keys[SDL_SCANCODE_RETURN] = FALSE;
+
+		// Play sound
+		//pPerformance->PlaySegmentEx( pSound[MENU_SELECT], NULL, 
+		//									NULL, DMUS_SEGF_SECONDARY, 
+		//									0, NULL, NULL, NULL );
+
+		switch (menu->getSelectedOp())
+		{
+		// 1 Player
+		case 0:
+			setGameState(STATE_GAMETYPE);
+			break;
+
+		// Options
+		case 1:
+			break;
+
+		// Quit
+		case 2:
+			keys[SDL_SCANCODE_ESCAPE] = TRUE;
+			break;
+		}
+	}
+}
+
+inline void Tetris::setGameState (GAMESTATE newState)
+{
+	if (gameState == newState)
+		return;
+
+	switch (gameState)
+	{
+	case STATE_MAINMENU:
+	case STATE_OPTIONS:
+	case STATE_GAMETYPE:
+	case STATE_LEVEL:
+	case STATE_HEIGHT:
+	case STATE_MUSIC:
+		delete menuBlock;
+		menuBlock = NULL;
+		delete menu;
+		menu = NULL;
+
+		break;
+
+	case STATE_GAME:
+		delete grid;
+		delete piece;
+		delete nextPiece;
+		delete timer;
+
+		grid = NULL;
+		piece = NULL;
+		nextPiece = NULL;
+		timer = NULL;
+
+		break;
+
+	case STATE_NEWHIGH:
+
+		// Save high scores
+		fstream outStream("highscores.txt", ios::out);
+
+		if (!outStream.fail())
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				outStream.write(highScores[i].highName, strlen(highScores[i].highName));
+				outStream << '\n';
+				outStream.write(highScores[i].highScore, strlen(highScores[i].highScore));
+				outStream << '\n';
+				outStream.write(highScores[i].highLines, strlen(highScores[i].highLines));
+				outStream << '\n';
+				outStream.write(highScores[i].highLevel, strlen(highScores[i].highLevel));
+				outStream << '\n';
+				outStream.write(highScores[i].highType, strlen(highScores[i].highType));
+				outStream << '\n';
+			}
+		}
+
+		outStream.close();
+
+		break;
+	}
+
+	gameState = newState;
+
+	switch (newState)
+	{
+	case STATE_MAINMENU:
+		menuBlock = new Block3D(6.0f, 6.0f, 6.0f, 2.0f);
+		menu = new Menu(3, 0, MenuLineHeight, "1 Player", "Options", "Quit");
+
+		break;
+
+	case STATE_OPTIONS:
+		break;
+
+	case STATE_GAMETYPE:
+		menuBlock = new Block3D(6.0f, 6.0f, 6.0f, 2.0f);
+		menu = new Menu(2, 0, MenuLineHeight, "Type A", "Type B");
+
+		break;
+
+	case STATE_LEVEL:
+		menuBlock = new Block3D(6.0f, 6.0f, 6.0f, 2.0f);
+		menu = new Menu(10, 0, MenuLineHeight, "0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
+
+		break;
+
+	case STATE_HEIGHT:
+		menuBlock = new Block3D(6.0f, 6.0f, 6.0f, 2.0f);
+		menu = new Menu(6, 0, MenuLineHeight, "0", "1", "2", "3", "4", "5");
+
+		break;
+
+	case STATE_MUSIC:
+		menuBlock = new Block3D(6.0f, 6.0f, 6.0f, 2.0f);
+		menu = new Menu(4, 0, MenuLineHeight, "1", "2", "3", "Off");
+
+		break;
+
+	case STATE_NEWHIGH:
+		newHighPos = 2;
+
+		if (score > StoL(highScores[1].highScore))
+		{
+			newHighPos = 1;
+
+			// Move 1 to 2
+			sprintf(highScores[2].highName, "%s", highScores[1].highName);
+			sprintf(highScores[2].highScore, "%s", highScores[1].highScore);
+			sprintf(highScores[2].highLines, "%s", highScores[1].highLines);
+			sprintf(highScores[2].highLevel, "%s", highScores[1].highLevel);
+			sprintf(highScores[2].highType, "%s", highScores[1].highType);
+		}
+		if (score > StoL(highScores[0].highScore))
+		{
+			newHighPos = 0;
+
+			// Move 0 to 1
+			sprintf(highScores[1].highName, "%s", highScores[0].highName);
+			sprintf(highScores[1].highScore, "%s", highScores[0].highScore);
+			sprintf(highScores[1].highLines, "%s", highScores[0].highLines);
+			sprintf(highScores[1].highLevel, "%s", highScores[0].highLevel);
+			sprintf(highScores[1].highType, "%s", highScores[0].highType);
+		}
+
+		// Put new high in position
+		sprintf(highScores[newHighPos].highName, "");
+		sprintf(highScores[newHighPos].highScore, "%d", score);
+		sprintf(highScores[newHighPos].highLines, "%d", lines);
+		sprintf(highScores[newHighPos].highLevel, "%d", level);
+		sprintf(highScores[newHighPos].highType, "%c", gameType);
+
+		break;
+
+	case STATE_GAME:
+		break;
+	}
+}
+
+void Tetris::Update()
+{
+	if (timer)
+	{
+		if (timer->TimeToUpdate())
+		{
+			if (gameState == STATE_INTRO)
+			{
+				gameState = STATE_MAINMENU;
+
+				delete timer;
+				timer = NULL;
+
+				return;
+			}
+
+			if (linesAwaitingClear)
+			{
+				if (clearStep < 5)
+				{
+					short a = 4 - clearStep;
+					short b = 5 + clearStep;
+
+					for (int i = 0; i < numFullLines; i++)
+					{
+						delete grid->blocks[fullLines[i]][a];
+						delete grid->blocks[fullLines[i]][b];
+
+						grid->blocks[fullLines[i]][a] = NULL;
+						grid->blocks[fullLines[i]][b] = NULL;
+					}
+
+					clearStep++;
+				}
+				// Finished lines are gone
+				else
+				{
+					// Lower the blocks in the rows above the recently deceased
+					for (int line = 0; line < numFullLines; line++)
+						for (int r = fullLines[line]; r >= 0; r--)
+							for (int c = 0; c < blocksPerRow; c++)
+							{
+								delete grid->blocks[r][c];
+								grid->blocks[r][c] = NULL;
+
+								// Can't drop rows above the top one
+								if (r != 0)
+									if (grid->blocks[r - 1][c])
+										grid->blocks[r][c] = new Block(grid->blocks[r - 1][c]->color);
+							}
+
+					linesAwaitingClear = false;
+					clearStep = 0;
+					numFullLines = 0;
+					for (int i = 0; i < 4; i++)
+						fullLines[i] = -1;
+
+					RetempoMusic();
+
+					//	New level
+					if ((static_cast <int> (lines / 10) - level > 0) && (level < 19))
+					{
+						level++;
+
+						// Play sound
+						//pPerformance->PlaySegmentEx( pSound[LEVELUP], NULL, 
+						//							NULL, DMUS_SEGF_SECONDARY, 
+						//							0, NULL, NULL, NULL );
+
+						Color3f oldScheme[3];
+
+						for (int i = 0; i < 3; i++)
+						{
+							oldScheme[i] = colorScheme[i];
+
+							colorScheme[i].red = ((rand() % 7) / 10.0f) + 0.2f;;
+							colorScheme[i].green = ((rand() % 7) / 10.0f) + 0.2f;;
+							colorScheme[i].blue = ((rand() % 7) / 10.0f) + 0.2f;;
+						}
+
+						for (int r = 0; r < blocksPerCol; r++)
+							for (int c = 0; c < blocksPerRow; c++)
+								if (grid->blocks[r][c])
+								{
+									if (grid->blocks[r][c]->color == oldScheme[0])
+										grid->blocks[r][c]->color = colorScheme[0];
+									else if (grid->blocks[r][c]->color == oldScheme[1])
+										grid->blocks[r][c]->color = colorScheme[1];
+									else
+										grid->blocks[r][c]->color = colorScheme[2];
+								}
+					}
+
+					if (level < 10)
+					{
+						delete timer;
+						timer = new RTimer (1000 - ((level < 10 ? level : 9) * LevelSpeedInc));
+					}
+					
+					piece = nextPiece;
+					nextPiece = new Piece();
+
+					ColorizePieces();
+				}
+
+				timer->Reset();
+				return;
+			}
+			
+			if (gameOver)
+			{
+				if (numDeadRows < blocksPerCol)
+					numDeadRows++;
+
+				timer->Reset();
+				return;
+			}
+
+			if (unpausing)
+			{
+				unpausing = false;
+				timeAfterResume = 0;
+
+				delete timer;
+				timer = new RTimer (1000 - ((level < 10 ? level : 9) * LevelSpeedInc));
+			}
+
+			if (piece)
+			{
+				if (!PathObstructed(DOWN))
+					piece->move(DOWN);
+				else
+					Unify();
+			}
+
+			timer->Reset();
+		}
+	}
+}
+
+
+bool Tetris::PathObstructed (unsigned short direction)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		if (piece->position.y - piece->layout[i].y >= 0)
+		{
+			switch (direction)
+			{
+			case DOWN:
+				if (piece->position.y - piece->layout[i].y + 1 == blocksPerCol)
+					return true;
+
+				if (grid->blocks[piece->position.y - piece->layout[i].y + 1][piece->position.x + piece->layout[i].x])
+					return true;
+
+				break;
+
+			case RIGHT:
+				if (piece->position.x + piece->layout[i].x + 1 == blocksPerRow)
+					return true;
+
+				if (grid->blocks[piece->position.y - piece->layout[i].y][piece->position.x + piece->layout[i].x + 1])
+					return true;
+
+				break;
+
+			case LEFT:
+				if (piece->position.x + piece->layout[i].x == 0)
+					return true;
+
+				if (grid->blocks[piece->position.y - piece->layout[i].y][piece->position.x + piece->layout[i].x - 1])
+					return true;
+
+				break;
+			}
+		}
+	}
+
+	return false;
+}
+
+void Tetris::RetempoMusic() {
+
+}
+
+// Puts the blocks of the piece into the grid, destroys the piece, and makes a new one
+void Tetris::Unify ()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		grid->blocks[piece->position.y - piece->layout[i].y][piece->position.x + piece->layout[i].x] =
+			new Block(piece->color);
+	}
+
+	LineCheck();
+	RetempoMusic();
+
+	// Play sound
+	//pPerformance->PlaySegmentEx( pSound[PIECE_LAND], NULL, 
+	//								NULL, DMUS_SEGF_SECONDARY, 0, NULL, NULL, NULL );
+
+	// The piece has landed - generate a new one
+	delete piece;
+
+	if (linesAwaitingClear)
+		piece = NULL;
+	else
+	{
+		piece = nextPiece;
+		nextPiece = new Piece();
+
+		ColorizePieces();
+	}
+
+	// Check for block overwrite (game over)
+	if (piece)
+		for (int i = 0; i < 4; i++)
+			if (piece->position.y - piece->layout[i].y >= 0)
+				if (grid->blocks[piece->position.y - piece->layout[i].y][piece->position.x + piece->layout[i].x])
+					gameOver = true;
+
+	if (gameOver)
+	{
+		delete timer;
+		timer = new RTimer(200);
+
+		// Cut the music
+		//pPerformance->Stop( NULL, NULL, 0, 0 );
+
+		// Unload the segment's band
+		//if (musicType < 3)
+			//pMusic[musicType]->Unload( pPerformance );
+
+		// Play "death" sound
+//		pPerformance->PlaySegmentEx( pSound[0], NULL, NULL, 0, 0, NULL, NULL, NULL );
+	}
 }
 
 #endif // !defined (Tetris_h)
