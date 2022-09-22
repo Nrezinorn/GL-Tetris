@@ -28,6 +28,7 @@ int main(int argc, char* args[]) {
     SDL_RenderSetLogicalSize(gRenderer, 640, 480);
 
     // Most compatible openGL for what we are doing, nothing fancy
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
@@ -39,16 +40,6 @@ int main(int argc, char* args[]) {
     if(!SDL_GL_MakeCurrent(gWindow, g_ctx) < 0) running=false;  
 
     Tetris game;
-
-     float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-     0.0f,  0.5f, 0.0f
-    }; 
-
-
-    //freetype_mod::font_data myfont;
-    //myfont.init("courier.ttf", 16);
 
     while(running){
       SDL_Event event;
