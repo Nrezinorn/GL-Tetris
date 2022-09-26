@@ -14,6 +14,13 @@ int InitGL (GLvoid)
 //		return FALSE;									// If Texture Didn't Load Return FALSE
 //	}
 
+	glViewport(0, 0, 640, 480);  //hardcoded viewport
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+//	gluPerspective(45.0f, (float)640 / (float)480, 0.1f, 100.0f);
 	glShadeModel (GL_SMOOTH);
 	glClearColor (0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth (1.0f);
