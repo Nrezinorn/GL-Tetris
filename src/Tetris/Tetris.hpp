@@ -333,6 +333,56 @@ void Tetris::draw()
 	}
 }
 
+void Tetris::DrawGame()
+{
+	//glTranslatef (0.0f, 0.0f, -25.0f);
+
+	// Flash background if player got a tetris
+	if (numFullLines == 4)
+	{
+		if (clearStep % 2)
+		{
+			glColor3f (0.8f, 0.8f, 0.8f);
+			glBegin(GL_QUADS);
+				glVertex3f (-25.0f,  15.0f, 0.0f);
+				glVertex3f (-25.0f, -15.0f, 0.0f);
+				glVertex3f ( 25.0f, -15.0f, 0.0f);
+				glVertex3f ( 25.0f,  15.0f, 0.0f);
+			glEnd();
+		}
+	}
+
+	grid->draw();
+	DrawLeftInfo();
+	DrawRightInfo();
+
+	if (piece)
+		piece->draw();
+
+	glLoadIdentity();
+	glTranslatef (0.0f, 0.0f, -25.0f);
+
+	if (gameOver)
+	{
+		float halfWidth = (blocksPerRow * blockLen) / 2;
+		float halfHeight = (blocksPerCol * blockLen) / 2;
+
+		float w = blocksPerRow * blockLen - 2 * 0.2f;
+		float h = blockLen - 2 * 0.2f;
+
+		Color3f color = { 0.5f, 0.5f, 0.5f };
+
+		glTranslatef (0.0f, (blocksPerCol * blockLen) / 2 + blockLen / 2, 0.0f);
+
+		for (int r = 1; r <= numDeadRows; r++)
+		{
+			glTranslatef (0.0f, -(r * blockLen), 0.0f);
+			DrawExtrusion (w, h, 0.2f, color);
+			glTranslatef (0.0f, (r * blockLen), 0.0f);
+		}
+	}
+}
+
 void Tetris::DrawGameTypeMenu()
 {
 //	glTranslatef (0.0f, 0.0f, -25.0f);
@@ -455,9 +505,8 @@ void Tetris::DrawHighScores()
 }
 
 void Tetris::DrawIntro()
-{
+{ 
 	//BUG?:  text cant be translatef'd in Z space 
-
 	glColor3f (1.0f, 1.0f, 1.0f);
 
 	glRasterPos2f (-0.5f, 0.8f);
@@ -484,6 +533,133 @@ void Tetris::DrawIntro()
 	glRasterPos2f (-0.7f, -0.8f);
 	freetype_mod::print(myfont,"SDL Port by Jim Gorz (c) 2022");
 
+}
+
+void Tetris::DrawLeftInfo()
+{
+	float halfBoardWidth = (blocksPerRow * blockLen) / 3;
+	float halfBoardHeight = (blocksPerCol * blockLen) / 2;
+
+	Color3f color = {0.5f, 0.5f, 0.5f};
+
+	// Move to left side of screen
+	glTranslatef (-(halfBoardWidth * 3.0f + 1.0f), 0.0f, 0.0f);
+
+	// Draw the indentation for the game type
+		glTranslatef (0.0f, 6.3f, 0.0f);
+			DrawExtrusion (4 * blockLen + blockLen, blockLen + blockLen / 2, 0.3f, color);
+			DrawIndent (4 * blockLen + blockLen / 2, blockLen, 0.3f, color);
+		glTranslatef (0.0f, -6.3f, 0.0f);
+
+	// Draw the indentation for the current level
+		glTranslatef (0.0f, 4.3f, 0.0f);
+			DrawExtrusion (4 * blockLen + 2 * blockLen, 
+							blockLen + blockLen / 2, 
+							0.3f, color);
+			DrawIndent (4 * blockLen + 3 * blockLen / 2, blockLen, 0.3f, color);
+		glTranslatef (0.0f, -4.3f, 0.0f);
+
+	// Draw the text
+		glColor3f (1.0f, 1.0f, 1.0f);
+		glTranslatef (0.0f, 0.0f, 1.0f);	// Move in front of the plane of the base plate
+
+		// Draw the game type
+			glRasterPos2f (-0.9f, 5.8f);
+			freetype_mod::print(myfont,"TYPE %c", gameType);
+
+		// Draw the number of lines
+			glRasterPos2f (-1.2f, 3.9f);
+			freetype_mod::print(myfont,"LEVEL-%d", level);
+
+		glTranslatef (0.0f, 0.0f, -1.0f);	// Move back into the plane of the base plate
+
+	// Move back to center-screen
+	glTranslatef ((halfBoardWidth * 3.0f + 1.0f), 0.0f, 0.0f);
+}
+
+void Tetris::DrawRightInfo()
+{
+	float halfBoardWidth = (blocksPerRow * blockLen) / 3;
+	float halfBoardHeight = (blocksPerCol * blockLen) / 2;
+
+	Color3f color = {0.5f, 0.5f, 0.5f};
+
+	// Move to right side of screen
+	glTranslatef (halfBoardWidth * 3.0f + 1.0f, 0.0f, 0.0f);
+
+	// Draw the indentation for the next piece
+		glTranslatef (0.0f, halfBoardHeight - 7.0f, 0.0f);
+			DrawExtrusion ((4 * blockLen + blockLen), 
+							(2 * blockLen + blockLen), 
+							0.3f, color);
+			DrawIndent ((4 * blockLen + blockLen / 2), 
+						(2 * blockLen + blockLen / 2), 
+						0.3f, color);
+		glTranslatef (0.0f, -(halfBoardHeight - 7.0f), 0.0f);
+
+	// Draw the indentation for the line count text
+		glTranslatef (0.0f, halfBoardHeight - 2.5f, 0.0f);
+			DrawExtrusion (4 * blockLen + blockLen, blockLen + blockLen / 2, 0.3f, color);
+			DrawIndent (4 * blockLen + blockLen / 2, blockLen, 0.3f, color);
+		glTranslatef (0.0f, -(halfBoardHeight - 2.5f), 0.0f);
+
+	// Draw the indentation for the top score
+		glTranslatef (0.0f, -3.3f, 0.0f);
+			DrawExtrusion (4 * blockLen + blockLen, blockLen + blockLen / 2, 0.3f, color);
+			DrawIndent (4 * blockLen + blockLen / 2, blockLen, 0.3f, color);
+		glTranslatef (0.0f, 3.3f, 0.0f);
+
+	// Draw the indentation for the current score
+		glTranslatef (0.0f, -6.3f, 0.0f);
+			DrawExtrusion (4 * blockLen + blockLen, blockLen + blockLen / 2, 0.3f, color);
+			DrawIndent (4 * blockLen + blockLen / 2, blockLen, 0.3f, color);
+		glTranslatef (0.0f, 6.3f, 0.0f);
+
+	// Draw the next piece in the indentation
+		if (nextPiece){
+		glTranslatef (0.0f, halfBoardHeight - 6.85f + blockLen/3, 0.0f);
+			nextPiece->drawForNext();
+		glTranslatef (0.0f, -(halfBoardHeight - 6.85f + blockLen/3), 0.0f);
+		}
+
+
+	// Draw the text
+
+		glColor3f (1.0f, 1.0f, 1.0f);
+		glTranslatef (0.0f, 0.0f, 1.0f);	// Move in front of the plane of the base plate
+
+		// Draw the "LINES" text
+			glRasterPos2f (-(halfBoardWidth - 1.3f), halfBoardHeight - 1.5f);
+			freetype_mod::print(myfont,"LINES");
+
+		// Draw the number of lines
+			glRasterPos2f (-1.5, halfBoardHeight - 2.9f);
+			freetype_mod::print(myfont,"%d", lines);
+
+		// Draw the "NEXT PIECE" text
+			glRasterPos2f (-(halfBoardWidth - 0.2f), halfBoardHeight - 5.2f);
+			freetype_mod::print(myfont,"NEXT PIECE");
+
+		// Draw the "TOP" text
+			glRasterPos2f (-1.05f, -2.0f);
+			freetype_mod::print(myfont,"TOP");
+
+		// Draw the top score
+			glRasterPos2f (-1.7f, -3.37f);
+			freetype_mod::print(myfont,"%s", highScores[0].highScore);
+
+		// Draw the "SCORE" text
+			glRasterPos2f (-1.5f, -4.9f);
+			freetype_mod::print(myfont,"SCORE");
+
+		// Draw the current score
+			glRasterPos2f (-1.7f, -6.25f);
+			freetype_mod::print(myfont,"%d", score);
+
+		glTranslatef (0.0f, 0.0f, -1.0f);	// Move back into the plane of the base plate
+
+	// Return to screen center
+	glTranslatef (-(halfBoardWidth * 3.0f + 1.0f), 0.0f, 0.0f);
 }
 
 void Tetris::DrawLevelMenu()
@@ -573,6 +749,79 @@ void Tetris::DrawMusicMenu()
 	glLoadIdentity();
 	//glTranslatef (0.5f, 0.3f, -8.0f);
 	menu->draw();
+}
+
+void Tetris::DrawNewHigh()
+{
+	//glTranslatef (0.0f, -4.5f, -25.0f);
+
+	Color3f color = { 0.5f, 0.5f, 0.5f };
+
+	DrawExtrusion(22.0f, 7.0f, 0.5f, color);
+
+	glTranslatef (0.0f, 2.5f, 0.0f);
+	DrawIndent(21.0f, 1.0f, 0.3f, color);
+
+	glTranslatef (0.0f, -3.5f, 0.0f);
+	DrawIndent(21.0f, 4.0f, 0.3f, color);
+
+
+	glLoadIdentity();
+	glTranslatef (0.0f, 0.0f, -5.0f);
+
+	glColor3f (1.0f, 0.2f, 0.2f);
+
+	glRasterPos2f (-0.6f, 1.5f);
+	freetype_mod::print(myfont,"Congratulations");
+
+	glColor3f (1.0f, 1.0f, 1.0f);
+
+	glRasterPos2f (-0.3f, 1.0f);
+	freetype_mod::print(myfont,"You are a");
+
+	glRasterPos2f (-0.5f, 0.8f);
+	freetype_mod::print(myfont,"Tetris Master");
+
+	glRasterPos2f (-0.9f, 0.3f);
+	freetype_mod::print(myfont,"Please enter your name");
+
+	glRasterPos2f (-1.7f, -0.44f);
+	freetype_mod::print(myfont,"Name");
+
+	glRasterPos2f (-0.6f, -0.44f);
+	freetype_mod::print(myfont,"Score");
+
+	glRasterPos2f ( 0.2f, -0.44f);
+	freetype_mod::print(myfont,"Lines");
+
+	glRasterPos2f ( 1.0f, -0.44f);
+	freetype_mod::print(myfont,"Lv");
+
+	glRasterPos2f ( 1.6f, -0.44f);
+	freetype_mod::print(myfont,"Type");
+
+	glTranslatef (0.0f, -0.85f, 0.0f);
+
+	for (int i = 0; i < 3; i++)
+	{
+		glRasterPos2f (-2.0f, -(i * 0.25f));
+		freetype_mod::print(myfont,"%d", i + 1);
+
+		glRasterPos2f (-1.7f, -(i * 0.25f));
+		freetype_mod::print(myfont,"%s", highScores[i].highName);
+
+		glRasterPos2f (-0.6f, -(i * 0.25f));
+		freetype_mod::print(myfont,"%s", highScores[i].highScore);
+
+		glRasterPos2f ( 0.2f, -(i * 0.25f));
+		freetype_mod::print(myfont,"%s", highScores[i].highLines);
+
+		glRasterPos2f ( 1.0f, -(i * 0.25f));
+		freetype_mod::print(myfont,"%s", highScores[i].highLevel);
+
+		glRasterPos2f ( 1.6f, -(i * 0.25f));
+		freetype_mod::print(myfont,"%s", highScores[i].highType);
+	}
 }
 
 void Tetris::DrawPaused()
