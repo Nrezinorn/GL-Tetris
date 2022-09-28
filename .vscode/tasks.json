@@ -17,6 +17,7 @@
             "-lmingw32",
             "-lSDL2main",
             "-lSDL2",
+            "-lSDL2_Mixer",
             //"-lgl",
             //"-lglew32",
             "-lfreeglut",

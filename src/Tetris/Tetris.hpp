@@ -84,13 +84,13 @@ protected:
 
 
 	Mix_Music*    pMusic[5];
-	Mix_Chunk     pSound[10];
+	Mix_Chunk*    pSound[10];
 
 	bool hurry;
 	double regTempo;
 	double fastTempo;
 
-    // TODO: Music Temp stuff
+    // TODO: Music Tempo stuff
 	//REFERENCE_TIME RTstart;
 	//MUSIC_TIME MTsongLen;
 	//MUSIC_TIME MTsongResumeStart;
@@ -201,22 +201,25 @@ Tetris::Tetris()
 
 	myfont.init("courier.ttf", 16);
 	InitGL();
- 	//InitAudio();
+ 	InitAudio();
 }
 
 Tetris::~Tetris()
 {
 	// Stop the music, and close down 
    //todo mix music stuff
-   /*
 	for (int i = 0; i < 5; i++)
-		if (pMusic[i])
-			pMusic[i]->Release();
+		if (pMusic[i]){
+			Mix_FreeMusic(pMusic[i]);  // free and 
+			pMusic[i] = NULL;	//set to null
+		}
 
-	for (i = 0; i < 10; i++)
-		if (pSound[i])
-			pSound[i]->Release();
-    */
+	for (int i = 0; i < 10; i++)
+		if (pSound[i]) {
+			Mix_FreeChunk(pSound[i]); // free and 
+			pSound[i] = NULL;  // set null
+		}
+    
 
 	if (grid)
 		delete grid;
@@ -856,9 +859,7 @@ void Tetris::GameEventHandler ()
 			if (!PathObstructed(LEFT))
 			{
 				// Play sound
-				//todo sound
-				//pPerformance->PlaySegmentEx( pSound[PIECE_MOVE], NULL, 
-				//							NULL, DMUS_SEGF_SECONDARY, 0, NULL, NULL, NULL );
+				Mix_PlayChannel(-1, pSound[PIECE_MOVE], 0);
 
 				piece->move(LEFT);
 			}
@@ -871,9 +872,7 @@ void Tetris::GameEventHandler ()
 			if (!PathObstructed(RIGHT))
 			{
 				// Play sound
-				//todo sound
-				//pPerformance->PlaySegmentEx( pSound[PIECE_MOVE], NULL, 
-				//							NULL, DMUS_SEGF_SECONDARY, 0, NULL, NULL, NULL );
+				Mix_PlayChannel(-1, pSound[PIECE_MOVE], 0);
 
 				piece->move(RIGHT);
 			}
@@ -886,9 +885,7 @@ void Tetris::GameEventHandler ()
 			if (!RotationObstructed(CW))
 			{
 				// Play sound
-				//todo sound
-				//pPerformance->PlaySegmentEx( pSound[PIECE_ROTATE], NULL, 
-				//							NULL, DMUS_SEGF_SECONDARY, 0, NULL, NULL, NULL );
+				Mix_PlayChannel(-1, pSound[PIECE_ROTATE], 0);
 
 				piece->rotate(CW);
 			}
@@ -901,9 +898,7 @@ void Tetris::GameEventHandler ()
 			if (!RotationObstructed(CCW))
 			{
 				// Play sound
-				//todo sound
-				//pPerformance->PlaySegmentEx( pSound[PIECE_ROTATE], NULL, 
-				//							NULL, DMUS_SEGF_SECONDARY, 0, NULL, NULL, NULL );
+				Mix_PlayChannel(-1, pSound[PIECE_ROTATE], 0);
 
 				piece->rotate(CCW);
 			}
@@ -974,10 +969,7 @@ void Tetris::HeightMenuEventHandler()
 		keys[SDL_SCANCODE_DOWN] = FALSE;
 
 		// Play sound
-		//todo sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_MOVE], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
 
 		menu->setSelectedOp(menu->getSelectedOp() < menu->getNumOps() - 1 ? menu->getSelectedOp() + 1 : 0);
 	}
@@ -987,10 +979,7 @@ void Tetris::HeightMenuEventHandler()
 		keys[SDL_SCANCODE_UP] = FALSE;
 
 		// Play sound
-		//todo sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_MOVE], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
 
 		menu->setSelectedOp(menu->getSelectedOp() > 0 ? menu->getSelectedOp() - 1 : menu->getNumOps() - 1);
 	}
@@ -1000,10 +989,7 @@ void Tetris::HeightMenuEventHandler()
 		keys[SDL_SCANCODE_RETURN] = FALSE;
 
 		// Play sound
-		//todo sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_SELECT], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_SELECT], 0);
 
 		height = menu->getSelectedOp();
 
@@ -1024,10 +1010,7 @@ void Tetris::HeightMenuEventHandler()
 		keys[SDL_SCANCODE_ESCAPE] = FALSE;
 
 		// Play sound
-		//todo sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_BACK], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_BACK], 0);
 
 		setGameState(STATE_LEVEL);
 	}
@@ -1162,6 +1145,40 @@ void Tetris::InitGame()
 	
 }
 
+void Tetris::InitAudio()
+{
+	for (int i = 0; i < 5; i++)
+		pMusic[i] = NULL;
+
+	for (int i = 0; i < 10; i++)
+		pSound[i] = NULL;
+
+    //init SDL Mixer
+    if (!Mix_Init(MIX_INIT_MID)) {
+		SDL_Event e;
+		e.type = SDL_QUIT;
+		SDL_PushEvent(&e);  // crash out on failure
+	}
+
+	Mix_OpenAudioDevice(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 4096, NULL, SDL_AUDIO_ALLOW_ANY_CHANGE);
+
+	//enum SOUNDTYPE { MENU_MOVE = 0, MENU_SELECT, MENU_BACK, PIECE_MOVE, PIECE_ROTATE, 
+	//PIECE_LAND, LINE_KILL, TETRIS, LEVELUP, PAUSE, DEATH };
+	//load music, loop using enum
+	pSound[0] = Mix_LoadWAV("sound/menumove.wav");
+	pSound[1] = Mix_LoadWAV("sound/menuselect.wav");
+	pSound[2] = Mix_LoadWAV("sound/menuback.wav");
+	pSound[3] = Mix_LoadWAV("sound/piecemove.wav");
+	pSound[4] = Mix_LoadWAV("sound/piecerotate.wav");
+	pSound[5] = Mix_LoadWAV("sound/pieceland.wav");
+	pSound[6] = Mix_LoadWAV("sound/linekill.wav");
+	pSound[7] = Mix_LoadWAV("sound/menuselect.wav");
+	pSound[8] = Mix_LoadWAV("sound/menuselect.wav");
+	pSound[9] = Mix_LoadWAV("sound/death.wav");
+	
+	
+
+}
 
 void Tetris::LineCheck ()
 {
@@ -1184,18 +1201,16 @@ void Tetris::LineCheck ()
 	// If no complete lines, skip this stuff
 	if (numFullLines > 0)
 	{
-		if (numFullLines < 4)
+		if (numFullLines < 4) {
 			// Play sound
-			//->PlaySegmentEx( pSound[LINE_KILL], NULL, 
-			//								NULL, DMUS_SEGF_SECONDARY, 
-			//								0, NULL, NULL, NULL );
+			Mix_PlayChannel(-1,pSound[LINE_KILL],0);
 			int foo;
-		else
+		}
+		else {
 			// Play sound
-//			pPerformance->PlaySegmentEx( pSound[TETRIS], NULL, 
-//											NULL, DMUS_SEGF_SECONDARY, 
-//											0, NULL, NULL, NULL );
+			Mix_PlayChannel(-1,pSound[TETRIS], 0); 
 			int foo;
+		}
 
 		switch (numFullLines)
 		{
@@ -1229,9 +1244,7 @@ void Tetris::MainMenuEventHandler ()
 		keys[SDL_SCANCODE_DOWN] = FALSE;
 
 		// Play sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_MOVE], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
 
 		menu->setSelectedOp(menu->getSelectedOp() < menu->getNumOps() - 1 ? menu->getSelectedOp() + 1 : 0);
 	}
@@ -1241,9 +1254,7 @@ void Tetris::MainMenuEventHandler ()
 		keys[SDL_SCANCODE_UP] = FALSE;
 
 		// Play sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_MOVE], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
 
 		menu->setSelectedOp(menu->getSelectedOp() > 0 ? menu->getSelectedOp() - 1 : menu->getNumOps() - 1);
 	}
@@ -1253,9 +1264,7 @@ void Tetris::MainMenuEventHandler ()
 		keys[SDL_SCANCODE_RETURN] = FALSE;
 
 		// Play sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_SELECT], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_SELECT], 0);
 
 		switch (menu->getSelectedOp())
 		{
@@ -1289,10 +1298,7 @@ void Tetris::MusicMenuEventHandler ()
 		//pPerformance->Stop( NULL, NULL, 0, 0 );
 
 		// Play sound
-		//play sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_MOVE], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
 
 		// Unload the old segment's instruments from the synthesizer
 		
@@ -1324,10 +1330,7 @@ void Tetris::MusicMenuEventHandler ()
 		//pPerformance->Stop( NULL, NULL, 0, 0 );
 
 		// Play sound
-		//todo sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_MOVE], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
 
 		/*
 		if (menu->getSelectedOp() < menu->getNumOps() - 2)
@@ -1355,10 +1358,7 @@ void Tetris::MusicMenuEventHandler ()
 		keys[SDL_SCANCODE_RETURN] = FALSE;
 
 		// Play sound
-		//todo sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_SELECT], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_SELECT], 0);
 
 		musicType = menu->getSelectedOp();
 
@@ -1377,10 +1377,7 @@ void Tetris::MusicMenuEventHandler ()
 		keys[SDL_SCANCODE_ESCAPE] = FALSE;
 
 		// Play sound
-		//todo sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_BACK], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_BACK], 0);
 
 		if (gameType == TYPE_A)
 			setGameState(STATE_LEVEL);
@@ -1476,9 +1473,7 @@ void Tetris::GameTypeMenuEventHandler ()
 		keys[SDL_SCANCODE_DOWN] = FALSE;
 
 		// Play sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_MOVE], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
 
 		menu->setSelectedOp(menu->getSelectedOp() < menu->getNumOps() - 1 ? menu->getSelectedOp() + 1 : 0);
 	}
@@ -1488,10 +1483,7 @@ void Tetris::GameTypeMenuEventHandler ()
 		keys[SDL_SCANCODE_UP] = FALSE;
 
 		// Play sound
-		//todo:  play sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_MOVE], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
 
 		menu->setSelectedOp(menu->getSelectedOp() > 0 ? menu->getSelectedOp() - 1 : menu->getNumOps() - 1);
 	}
@@ -1501,10 +1493,7 @@ void Tetris::GameTypeMenuEventHandler ()
 		keys[SDL_SCANCODE_RETURN] = FALSE;
 
 		// Play sound
-		//todo:  play sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_SELECT], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-	//										0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_SELECT], 0);
 
 		switch (menu->getSelectedOp())
 		{
@@ -1527,10 +1516,7 @@ void Tetris::GameTypeMenuEventHandler ()
 		keys[SDL_SCANCODE_ESCAPE] = FALSE;
 
 		// Play sound
-		//todo:  play sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_BACK], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_BACK], 0);
 
 		setGameState(STATE_MAINMENU);
 	}
@@ -1553,10 +1539,7 @@ void Tetris::LevelMenuEventHandler ()
 		keys[SDL_SCANCODE_DOWN] = FALSE;
 
 		// Play sound
-		//todo:: sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_MOVE], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
 
 		menu->setSelectedOp(menu->getSelectedOp() < menu->getNumOps() - 1 ? menu->getSelectedOp() + 1 : 0);
 	}
@@ -1566,10 +1549,7 @@ void Tetris::LevelMenuEventHandler ()
 		keys[SDL_SCANCODE_UP] = FALSE;
 
 		// Play sound
-		//todo sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_MOVE], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
 
 		menu->setSelectedOp(menu->getSelectedOp() > 0 ? menu->getSelectedOp() - 1 : menu->getNumOps() - 1);
 	}
@@ -1579,10 +1559,7 @@ void Tetris::LevelMenuEventHandler ()
 		keys[SDL_SCANCODE_RETURN] = FALSE;
 
 		// Play sound
-		//todo: sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_SELECT], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_SELECT], 0);
 
 		level = menu->getSelectedOp();
 
@@ -1608,10 +1585,7 @@ void Tetris::LevelMenuEventHandler ()
 		keys[SDL_SCANCODE_ESCAPE] = FALSE;
 
 		// Play sound
-		//todo: sound
-		//pPerformance->PlaySegmentEx( pSound[MENU_BACK], NULL, 
-		//									NULL, DMUS_SEGF_SECONDARY, 
-		//									0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[MENU_BACK], 0);
 
 		setGameState(STATE_GAMETYPE);
 	}
@@ -1896,9 +1870,7 @@ void Tetris::Update()
 						level++;
 
 						// Play sound
-						//pPerformance->PlaySegmentEx( pSound[LEVELUP], NULL, 
-						//							NULL, DMUS_SEGF_SECONDARY, 
-						//							0, NULL, NULL, NULL );
+						Mix_PlayChannel(-1, pSound[LEVELUP], 0);
 
 						Color3f oldScheme[3];
 
@@ -2030,8 +2002,7 @@ void Tetris::Unify ()
 	RetempoMusic();
 
 	// Play sound
-	//pPerformance->PlaySegmentEx( pSound[PIECE_LAND], NULL, 
-	//								NULL, DMUS_SEGF_SECONDARY, 0, NULL, NULL, NULL );
+	Mix_PlayChannel(-1, pSound[PIECE_LAND], 0);
 
 	// The piece has landed - generate a new one
 	delete piece;
@@ -2066,7 +2037,7 @@ void Tetris::Unify ()
 			//pMusic[musicType]->Unload( pPerformance );
 
 		// Play "death" sound
-//		pPerformance->PlaySegmentEx( pSound[0], NULL, NULL, 0, 0, NULL, NULL, NULL );
+		Mix_PlayChannel(-1, pSound[DEATH], 0);
 	}
 }
 

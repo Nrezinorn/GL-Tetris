@@ -14,8 +14,9 @@ int InitGL (GLvoid)
 //		return FALSE;									// If Texture Didn't Load Return FALSE
 //	}
 
-	glViewport(0, 0, 640, 480);  //hardcoded viewport
+	
 	glMatrixMode(GL_PROJECTION);
+	glViewport(0, 0, 640, 480);  //hardcoded viewport
 	glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
