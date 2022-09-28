@@ -2,7 +2,8 @@
 #ifndef Menu_h
 #define Menu_h
 
-#include <windows.h>
+//This is probably not needed at all, as SDL handles these includes for us
+//#include <windows.h>
 
 #include <SDL2/SDL_opengl.h>
 #include "../freetype.h"
