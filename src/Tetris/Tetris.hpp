@@ -510,6 +510,8 @@ void Tetris::DrawHighScores()
 void Tetris::DrawIntro()
 { 
 	//BUG?:  text cant be translatef'd in Z space 
+	glTranslatef(0.f,0.f, -25.0f);
+
 	glColor3f (1.0f, 1.0f, 1.0f);
 
 	glRasterPos2f (-0.5f, 0.8f);
@@ -552,6 +554,7 @@ void Tetris::DrawLeftInfo()
 		glTranslatef (0.0f, 6.3f, 0.0f);
 			DrawExtrusion (4 * blockLen + blockLen, blockLen + blockLen / 2, 0.3f, color);
 			DrawIndent (4 * blockLen + blockLen / 2, blockLen, 0.3f, color);
+	
 		glTranslatef (0.0f, -6.3f, 0.0f);
 
 	// Draw the indentation for the current level

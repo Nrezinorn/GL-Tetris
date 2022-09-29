@@ -28,11 +28,11 @@ int main(int argc, char* args[]) {
     gWindow = SDL_CreateWindow("GL Tetris 2022", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
     // TODO: check for null
 
-    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+    //gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
     // TODO: check for null
 
     // Scale to 640x480 no matter desktop resolution
-    SDL_RenderSetLogicalSize(gRenderer, 640, 480);
+    //SDL_RenderSetLogicalSize(gRenderer, 640, 480);
 
     // create opengl context for our window
     SDL_GLContext g_ctx = SDL_GL_CreateContext(gWindow);

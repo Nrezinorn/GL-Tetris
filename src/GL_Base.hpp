@@ -2,10 +2,18 @@
 #define GL_BASE_HPP
 
 #include <SDL2/SDL_opengl.h>
+#include <glm\glm.hpp>
+#include <glm\ext.hpp>
 
 float LightAmbient[]  =	{ 0.5f, 0.5f, 0.5f, 1.0f };
 float LightDiffuse[]  =	{ 0.5f, 0.5f, 0.5f, 1.0f };
 float LightPosition[] =	{ 0.0f, 0.0f, 2.0f, 1.0f };
+
+glm::mat4 projection = glm::perspective(
+  // FOV & aspect
+  45.0f, 640.0f / 480.0f, 
+  // Near and far planes
+  0.1f, 100.0f);
 
 int InitGL (GLvoid)
 {
@@ -18,10 +26,12 @@ int InitGL (GLvoid)
 	glMatrixMode(GL_PROJECTION);
 	glViewport(0, 0, 640, 480);  //hardcoded viewport
 	glLoadIdentity();
+	glLoadMatrixf(glm::value_ptr(projection));
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-//	gluPerspective(45.0f, (float)640 / (float)480, 0.1f, 100.0f);
+//	
 	glShadeModel (GL_SMOOTH);
 	glClearColor (0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth (1.0f);
