@@ -1,0 +1,10 @@
+CXX = g++
+
+CXXFLAGS = -w -Wall -g -DDEBUG -F/Library/Frameworks -I/usr/local/include/freetype2
+LDFLAGS = -framework SDL2 -framework SDL2_mixer -framework OpenGL -framework cocoa  `freetype-config --libs`
+
+main: src/main.cpp
+	${CXX} ${CXXFLAGS} ${LDFLAGS} -o GLTetris2022.bin src/*.cpp
+.PHONY: clean
+clean:
+	rm GLTetris2022.bin

@@ -5,7 +5,11 @@
 #define INITGUID
 
 #include <SDL2/SDL_opengl.h>
-#include <SDL2/SDL_mixer.h>
+#if __APPLE__
+#include <SDL2_mixer/SDL_mixer.h>
+#else
+#include "SDL2/SDL_mixer.h"
+#endif
 #include <stdlib.h>			// Randomization (srand, rand)
 #include <time.h>			// Computer clock access (for randomization)
 #include <fstream>		// File IO (high scores)
@@ -857,7 +861,7 @@ void Tetris::GameEventHandler ()
 	{
 		if (keys[SDL_SCANCODE_LEFT])
 		{
-			keys[SDL_SCANCODE_LEFT] = FALSE;
+			keys[SDL_SCANCODE_LEFT] = false;
 
 			if (!PathObstructed(LEFT))
 			{
@@ -870,7 +874,7 @@ void Tetris::GameEventHandler ()
 
 		if (keys[SDL_SCANCODE_RIGHT])
 		{
-			keys[SDL_SCANCODE_RIGHT] = FALSE;
+			keys[SDL_SCANCODE_RIGHT] = false;
 
 			if (!PathObstructed(RIGHT))
 			{
@@ -883,7 +887,7 @@ void Tetris::GameEventHandler ()
 
 		if (keys[SDL_SCANCODE_S])
 		{
-			keys[SDL_SCANCODE_S] = FALSE;
+			keys[SDL_SCANCODE_S] = false;
 
 			if (!RotationObstructed(CW))
 			{
@@ -896,7 +900,7 @@ void Tetris::GameEventHandler ()
 
 		if (keys[SDL_SCANCODE_A])
 		{
-			keys[SDL_SCANCODE_A] = FALSE;
+			keys[SDL_SCANCODE_A] = false;
 
 			if (!RotationObstructed(CCW))
 			{
@@ -909,7 +913,7 @@ void Tetris::GameEventHandler ()
 
 		if (keys[SDL_SCANCODE_DOWN])
 		{
-			keys[SDL_SCANCODE_DOWN] = FALSE;
+			keys[SDL_SCANCODE_DOWN] = false;
 
 			if (!PathObstructed(DOWN))
 				piece->move(DOWN);
@@ -921,7 +925,7 @@ void Tetris::GameEventHandler ()
 
 		if (keys[SDL_SCANCODE_RETURN] || keys[SDL_SCANCODE_P])
 		{
-			keys[SDL_SCANCODE_RETURN] = keys[SDL_SCANCODE_P] = FALSE;
+			keys[SDL_SCANCODE_RETURN] = keys[SDL_SCANCODE_P] = false;
 
 			gameState = STATE_PAUSED;
 
@@ -948,7 +952,7 @@ void Tetris::GameEventHandler ()
 
 	if (keys[SDL_SCANCODE_ESCAPE] || keys[SDL_SCANCODE_RETURN])
 	{
-		keys[SDL_SCANCODE_ESCAPE] = keys[SDL_SCANCODE_RETURN] = FALSE;
+		keys[SDL_SCANCODE_ESCAPE] = keys[SDL_SCANCODE_RETURN] = false;
 
 		// Show high scores
 		if (score > StoL(highScores[2].highScore))
@@ -969,7 +973,7 @@ void Tetris::HeightMenuEventHandler()
 {
 	if (keys[SDL_SCANCODE_DOWN])
 	{
-		keys[SDL_SCANCODE_DOWN] = FALSE;
+		keys[SDL_SCANCODE_DOWN] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
@@ -979,7 +983,7 @@ void Tetris::HeightMenuEventHandler()
 
 	if (keys[SDL_SCANCODE_UP])
 	{
-		keys[SDL_SCANCODE_UP] = FALSE;
+		keys[SDL_SCANCODE_UP] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
@@ -989,7 +993,7 @@ void Tetris::HeightMenuEventHandler()
 
 	if (keys[SDL_SCANCODE_RETURN])
 	{
-		keys[SDL_SCANCODE_RETURN] = FALSE;
+		keys[SDL_SCANCODE_RETURN] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_SELECT], 0);
@@ -1010,7 +1014,7 @@ void Tetris::HeightMenuEventHandler()
 
 	if (keys[SDL_SCANCODE_ESCAPE])
 	{
-		keys[SDL_SCANCODE_ESCAPE] = FALSE;
+		keys[SDL_SCANCODE_ESCAPE] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_BACK], 0);
@@ -1023,7 +1027,7 @@ void Tetris::HighScoresEventHandler()
 {
 	if (keys[SDL_SCANCODE_ESCAPE] || keys[SDL_SCANCODE_RETURN])
 	{
-		keys[SDL_SCANCODE_ESCAPE] = keys[SDL_SCANCODE_RETURN] = FALSE;
+		keys[SDL_SCANCODE_ESCAPE] = keys[SDL_SCANCODE_RETURN] = false;
 		setGameState(STATE_MAINMENU);
 	}
 }
@@ -1244,7 +1248,7 @@ void Tetris::MainMenuEventHandler ()
 {
 	if (keys[SDL_SCANCODE_DOWN])
 	{
-		keys[SDL_SCANCODE_DOWN] = FALSE;
+		keys[SDL_SCANCODE_DOWN] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
@@ -1254,7 +1258,7 @@ void Tetris::MainMenuEventHandler ()
 
 	if (keys[SDL_SCANCODE_UP])
 	{
-		keys[SDL_SCANCODE_UP] = FALSE;
+		keys[SDL_SCANCODE_UP] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
@@ -1264,7 +1268,7 @@ void Tetris::MainMenuEventHandler ()
 
 	if (keys[SDL_SCANCODE_RETURN])
 	{
-		keys[SDL_SCANCODE_RETURN] = FALSE;
+		keys[SDL_SCANCODE_RETURN] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_SELECT], 0);
@@ -1282,7 +1286,7 @@ void Tetris::MainMenuEventHandler ()
 
 		// Quit
 		case 2:
-			keys[SDL_SCANCODE_ESCAPE] = TRUE;
+			keys[SDL_SCANCODE_ESCAPE] = true;
 			break;
 		}
 	}
@@ -1292,7 +1296,7 @@ void Tetris::MusicMenuEventHandler ()
 {
 	if (keys[SDL_SCANCODE_DOWN])
 	{
-		keys[SDL_SCANCODE_DOWN] = FALSE;
+		keys[SDL_SCANCODE_DOWN] = false;
 
 		menu->setSelectedOp(menu->getSelectedOp() < menu->getNumOps() - 1 ? menu->getSelectedOp() + 1 : 0);
 
@@ -1324,7 +1328,7 @@ void Tetris::MusicMenuEventHandler ()
 
 	if (keys[SDL_SCANCODE_UP])
 	{
-		keys[SDL_SCANCODE_UP] = FALSE;
+		keys[SDL_SCANCODE_UP] = false;
 
 		menu->setSelectedOp(menu->getSelectedOp() > 0 ? menu->getSelectedOp() - 1 : menu->getNumOps() - 1);
 
@@ -1358,7 +1362,7 @@ void Tetris::MusicMenuEventHandler ()
 
 	if (keys[SDL_SCANCODE_RETURN])
 	{
-		keys[SDL_SCANCODE_RETURN] = FALSE;
+		keys[SDL_SCANCODE_RETURN] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_SELECT], 0);
@@ -1377,7 +1381,7 @@ void Tetris::MusicMenuEventHandler ()
 
 	if (keys[SDL_SCANCODE_ESCAPE])
 	{
-		keys[SDL_SCANCODE_ESCAPE] = FALSE;
+		keys[SDL_SCANCODE_ESCAPE] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_BACK], 0);
@@ -1403,7 +1407,7 @@ void Tetris::NewHighEventHandler()
 		{
 			if (keys[k])
 			{
-				keys[k] = FALSE;
+				keys[k] = false;
 
 				sprintf (highScores[newHighPos].highName, "%s%c", 
 						 highScores[newHighPos].highName, 
@@ -1416,7 +1420,7 @@ void Tetris::NewHighEventHandler()
 		{
 			if (keys[k])
 			{
-				keys[k] = FALSE;
+				keys[k] = false;
 
 				sprintf (highScores[newHighPos].highName, "%s%c", 
 						 highScores[newHighPos].highName, k);
@@ -1425,7 +1429,7 @@ void Tetris::NewHighEventHandler()
 
 		if (keys[SDL_SCANCODE_SPACE])
 		{
-			keys[SDL_SCANCODE_SPACE] = FALSE;
+			keys[SDL_SCANCODE_SPACE] = false;
 
 			sprintf (highScores[newHighPos].highName, "%s ", 
 					 highScores[newHighPos].highName);
@@ -1435,21 +1439,21 @@ void Tetris::NewHighEventHandler()
 	if (len > 0)
 		if (keys[SDL_SCANCODE_BACKSPACE])
 		{
-			keys[SDL_SCANCODE_BACKSPACE] = FALSE;
+			keys[SDL_SCANCODE_BACKSPACE] = false;
 
 			highScores[newHighPos].highName[len - 1] = '\0';
 		}
 
 	if (keys[SDL_SCANCODE_RETURN])
 	{
-		keys[SDL_SCANCODE_RETURN] = FALSE;
+		keys[SDL_SCANCODE_RETURN] = false;
 
 		setGameState(STATE_MAINMENU);
 	}
 
 	if (keys[SDL_SCANCODE_ESCAPE])
 	{
-		keys[SDL_SCANCODE_ESCAPE] = FALSE;
+		keys[SDL_SCANCODE_ESCAPE] = false;
 
 		setGameState(STATE_MAINMENU);
 	}
@@ -1459,7 +1463,7 @@ void Tetris::PauseEventHandler()
 {
 	if (keys[SDL_SCANCODE_RETURN] || keys[SDL_SCANCODE_P] || keys[SDL_SCANCODE_ESCAPE])
 	{
-		keys[SDL_SCANCODE_RETURN] = keys[SDL_SCANCODE_P] = keys[SDL_SCANCODE_ESCAPE] = FALSE;
+		keys[SDL_SCANCODE_RETURN] = keys[SDL_SCANCODE_P] = keys[SDL_SCANCODE_ESCAPE] = false;
 
 		gameState = STATE_GAME;
 
@@ -1473,7 +1477,7 @@ void Tetris::GameTypeMenuEventHandler ()
 {
 	if (keys[SDL_SCANCODE_DOWN])
 	{
-		keys[SDL_SCANCODE_DOWN] = FALSE;
+		keys[SDL_SCANCODE_DOWN] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
@@ -1483,7 +1487,7 @@ void Tetris::GameTypeMenuEventHandler ()
 
 	if (keys[SDL_SCANCODE_UP])
 	{
-		keys[SDL_SCANCODE_UP] = FALSE;
+		keys[SDL_SCANCODE_UP] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
@@ -1493,7 +1497,7 @@ void Tetris::GameTypeMenuEventHandler ()
 
 	if (keys[SDL_SCANCODE_RETURN])
 	{
-		keys[SDL_SCANCODE_RETURN] = FALSE;
+		keys[SDL_SCANCODE_RETURN] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_SELECT], 0);
@@ -1516,7 +1520,7 @@ void Tetris::GameTypeMenuEventHandler ()
 
 	if (keys[SDL_SCANCODE_ESCAPE])
 	{
-		keys[SDL_SCANCODE_ESCAPE] = FALSE;
+		keys[SDL_SCANCODE_ESCAPE] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_BACK], 0);
@@ -1539,7 +1543,7 @@ void Tetris::LevelMenuEventHandler ()
 {
 	if (keys[SDL_SCANCODE_DOWN])
 	{
-		keys[SDL_SCANCODE_DOWN] = FALSE;
+		keys[SDL_SCANCODE_DOWN] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
@@ -1549,7 +1553,7 @@ void Tetris::LevelMenuEventHandler ()
 
 	if (keys[SDL_SCANCODE_UP])
 	{
-		keys[SDL_SCANCODE_UP] = FALSE;
+		keys[SDL_SCANCODE_UP] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_MOVE], 0);
@@ -1559,7 +1563,7 @@ void Tetris::LevelMenuEventHandler ()
 
 	if (keys[SDL_SCANCODE_RETURN])
 	{
-		keys[SDL_SCANCODE_RETURN] = FALSE;
+		keys[SDL_SCANCODE_RETURN] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_SELECT], 0);
@@ -1585,7 +1589,7 @@ void Tetris::LevelMenuEventHandler ()
 
 	if (keys[SDL_SCANCODE_ESCAPE])
 	{
-		keys[SDL_SCANCODE_ESCAPE] = FALSE;
+		keys[SDL_SCANCODE_ESCAPE] = false;
 
 		// Play sound
 		Mix_PlayChannel(-1, pSound[MENU_BACK], 0);

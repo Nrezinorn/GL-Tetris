@@ -19,7 +19,7 @@ int InitGL (GLvoid)
 {
 //	if (!LoadGLTextures())								// Jump To Texture Loading Routine ( NEW )
 //	{
-//		return FALSE;									// If Texture Didn't Load Return FALSE
+//		return FALSE;									// If Texture Didn't Load Return false
 //	}
 
 	
@@ -45,7 +45,7 @@ int InitGL (GLvoid)
 
 	glEnable (GL_LIGHT1);
 
-	return TRUE;
+	return true;
 }
 
 #endif
