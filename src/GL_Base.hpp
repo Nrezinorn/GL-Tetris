@@ -2,8 +2,14 @@
 #define GL_BASE_HPP
 
 #include <SDL2/SDL_opengl.h>
-#include <glm\glm.hpp>
+
+#ifdef __APPLE__
+#include <glm.hpp>
+#include <ext.hpp>
+#else
+#include <glm\vec4.hpp>
 #include <glm\ext.hpp>
+#endif
 
 float LightAmbient[]  =	{ 0.5f, 0.5f, 0.5f, 1.0f };
 float LightDiffuse[]  =	{ 0.5f, 0.5f, 0.5f, 1.0f };
