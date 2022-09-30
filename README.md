@@ -23,3 +23,4 @@ freetype font rendering uses the "hacked" nehe lesson 34 from here [https://user
 
 # Bugs
 -  `7/30/2022` ~~Freetype Font rendering currently does not work properly~~
+-  `9/30/2022` OSX Crashes on app close, OSX Crash on game end
