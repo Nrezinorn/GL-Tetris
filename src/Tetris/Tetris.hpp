@@ -211,7 +211,6 @@ Tetris::Tetris()
 Tetris::~Tetris()
 {
 	// Stop the music, and close down 
-   //todo mix music stuff
 	for (int i = 0; i < 5; i++)
 		if (pMusic[i]){
 			Mix_FreeMusic(pMusic[i]);  // free and 
@@ -342,7 +341,7 @@ void Tetris::draw()
 
 void Tetris::DrawGame()
 {
-	//glTranslatef (0.0f, 0.0f, -25.0f);
+	glTranslatef (0.0f, 0.0f, -25.0f);
 
 	// Flash background if player got a tetris
 	if (numFullLines == 4)
@@ -392,11 +391,11 @@ void Tetris::DrawGame()
 
 void Tetris::DrawGameTypeMenu()
 {
-//	glTranslatef (0.0f, 0.0f, -25.0f);
-//	menuBlock->draw();
-//	glLoadIdentity();
+	glTranslatef (0.0f, 0.0f, -25.0f);
+	menuBlock->draw();
+	glLoadIdentity();
 
-	//glTranslatef (0.0f, 0.0f, -5.0f);
+	glTranslatef (0.0f, 0.0f, -5.0f);
 
 	glColor3f(0.5f, 0.5f, 0.5f);
 
@@ -410,17 +409,17 @@ void Tetris::DrawGameTypeMenu()
 
 	glLoadIdentity();
 
-	//glTranslatef (0.1f, 0.3f, -8.0f);
+	glTranslatef (0.1f, 0.3f, -8.0f);
 	menu->draw();
 }
 
 void Tetris::DrawHeightMenu()
 {
-	//	glTranslatef (0.0f, 0.0f, -25.0f);
-	//	menuBlock->draw();
-	//	glLoadIdentity();
+	glTranslatef (0.0f, 0.0f, -25.0f);
+	menuBlock->draw();
+	glLoadIdentity();
 
-//	glTranslatef (0.0f, 0.0f, -5.0f);
+	glTranslatef (0.0f, 0.0f, -5.0f);
 
 	glColor3f(0.5f, 0.5f, 0.5f);
 
@@ -445,7 +444,7 @@ void Tetris::DrawHeightMenu()
 	freetype_mod::print(myfont,"Starting Height");
 
 	glLoadIdentity();
-	//glTranslatef (0.5f, 0.3f, -8.0f);
+	glTranslatef (0.5f, 0.3f, -8.0f);
 	menu->draw();
 }
 
@@ -514,32 +513,40 @@ void Tetris::DrawHighScores()
 void Tetris::DrawIntro()
 { 
 	//BUG?:  text cant be translatef'd in Z space 
+	//Note for Future Me:  wasnt a bug, gluPerspective (depreciated) was not set properly
+	// see GL_Base.hpp for getting perspective with glm
 	glTranslatef(0.f,0.f, -25.0f);
 
 	glColor3f (1.0f, 1.0f, 1.0f);
 
 	glRasterPos2f (-0.5f, 0.8f);
+	//glRasterPos2f (-1.1f, 1.0f);
 	freetype_mod::print(myfont, "Original concept, design,");
 
 	glRasterPos2f (-0.3f, 0.6f);
+	//glRasterPos2f (-0.4f, 0.8f);
 	freetype_mod::print(myfont, "and program");
 
 	glRasterPos2f (-0.45f, 0.4f);
+	//glRasterPos2f (-0.8f, 0.6f);
 	freetype_mod::print(myfont, "by Alexey Pazhitnov");
 
-	glRasterPos2f (-0.1f, 0.2f);
+	//glRasterPos2f (-0.1f, 0.2f);
+	glRasterPos2f (-0.1f, 0.4f);
 	freetype_mod::print(myfont, "1987");
 
 	glRasterPos2f (-0.4f, -0.2f);
+	//glRasterPos2f (-0.65f, -0.8f);
 	freetype_mod::print(myfont, "This incarnation");
 
 	glRasterPos2f (-0.35f, -0.4f);
+	//glRasterPos2f (-0.6f, -1.0f);
 	freetype_mod::print(myfont, "by Dan Peschman");
 
-	glRasterPos2f (-0.1f, -0.6f);
-	freetype_mod::print(myfont,"2002");
+	//glRasterPos2f (-0.1f, -0.6f);
+	//freetype_mod::print(myfont,"2002");
 
-	glRasterPos2f (-0.7f, -0.8f);
+	glRasterPos2f (-0.1f, -1.2f);
 	freetype_mod::print(myfont,"SDL Port by Jim Gorz (c) 2022");
 
 }
@@ -674,11 +681,11 @@ void Tetris::DrawRightInfo()
 
 void Tetris::DrawLevelMenu()
 {
-//	glTranslatef (0.0f, 0.0f, -25.0f);
-//	menuBlock->draw();
-//	glLoadIdentity();
+	glTranslatef (0.0f, 0.0f, -25.0f);
+	menuBlock->draw();
+	glLoadIdentity();
 
-//	glTranslatef (0.0f, 0.0f, -5.0f);
+	glTranslatef (0.0f, 0.0f, -5.0f);
 
 	glColor3f(0.5f, 0.5f, 0.5f);
 
@@ -697,7 +704,7 @@ void Tetris::DrawLevelMenu()
 	freetype_mod::print(myfont,"Difficulty Level");
 
 	glLoadIdentity();
-//	glTranslatef (0.5f, 0.3f, -8.0f);
+	glTranslatef (0.5f, 0.3f, -8.0f);
 	menu->draw();
 }
 
@@ -707,23 +714,23 @@ void Tetris::DrawMainMenu()
 	menuBlock->draw();
 	glLoadIdentity();
 
-	//glTranslatef (0.0f, 0.0f, -4.0f);
+	glTranslatef (0.0f, 0.0f, -4.0f);
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glRasterPos2f (-0.20f, 0.5f);
 	freetype_mod::print(myfont,"Tetris");
 
 	glLoadIdentity();
-	//glTranslatef (-0.3f, -2.0f, -8.0f);
+	glTranslatef (-0.3f, -2.0f, -8.0f);
 	menu->draw();
 }
 
 void Tetris::DrawMusicMenu()
 {
-//	glTranslatef (0.0f, 0.0f, -25.0f);
-//	menuBlock->draw();
-//	glLoadIdentity();
+	glTranslatef (0.0f, 0.0f, -25.0f);
+	menuBlock->draw();
+	glLoadIdentity();
 
-	//glTranslatef (0.0f, 0.0f, -5.0f);
+	glTranslatef (0.0f, 0.0f, -5.0f);
 
 	glColor3f(0.5f, 0.5f, 0.5f);
 
@@ -757,13 +764,13 @@ void Tetris::DrawMusicMenu()
 	freetype_mod::print(myfont,"Music Type");
 
 	glLoadIdentity();
-	//glTranslatef (0.5f, 0.3f, -8.0f);
+	glTranslatef (0.5f, 0.3f, -8.0f);
 	menu->draw();
 }
 
 void Tetris::DrawNewHigh()
 {
-	//glTranslatef (0.0f, -4.5f, -25.0f);
+	glTranslatef (0.0f, -4.5f, -25.0f);
 
 	Color3f color = { 0.5f, 0.5f, 0.5f };
 
@@ -1167,7 +1174,7 @@ void Tetris::InitAudio()
 		SDL_PushEvent(&e);  // crash out on failure
 	}
 
-	Mix_OpenAudioDevice(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 4096, NULL, SDL_AUDIO_ALLOW_ANY_CHANGE);
+	Mix_OpenAudioDevice(11025, AUDIO_S16SYS, 2, 2048, NULL, SDL_AUDIO_ALLOW_ANY_CHANGE);
 
 	//enum SOUNDTYPE { MENU_MOVE = 0, MENU_SELECT, MENU_BACK, PIECE_MOVE, PIECE_ROTATE, 
 	//PIECE_LAND, LINE_KILL, TETRIS, LEVELUP, PAUSE, DEATH };
@@ -1182,6 +1189,10 @@ void Tetris::InitAudio()
 	pSound[7] = Mix_LoadWAV("sound/menuselect.wav");
 	pSound[8] = Mix_LoadWAV("sound/menuselect.wav");
 	pSound[9] = Mix_LoadWAV("sound/death.wav");
+
+	pMusic[0] = Mix_LoadMUS("music/A.mid");
+	pMusic[1] = Mix_LoadMUS("music/B.mid");
+	pMusic[2] = Mix_LoadMUS("music/C.mid");
 	
 	
 
@@ -1575,13 +1586,14 @@ void Tetris::LevelMenuEventHandler ()
 			setGameState (STATE_MUSIC);
 
 			// Download music type 1's instruments to the synthesizer
-			//todo music
+			
 			//pMusic[0]->Download( pPerformance );
 
 			// Play music type 1
-			//today music
 			//pPerformance->PlaySegmentEx( pMusic[0], NULL, 
 			//								NULL, 0, 0, NULL, NULL, NULL );
+			Mix_PlayMusic(pMusic[0],-1 );
+
 		}
 		else
 			setGameState (STATE_HEIGHT);
@@ -2038,6 +2050,7 @@ void Tetris::Unify ()
 
 		// Cut the music
 		//pPerformance->Stop( NULL, NULL, 0, 0 );
+		Mix_HaltMusic();
 
 		// Unload the segment's band
 		//if (musicType < 3)
