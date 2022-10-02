@@ -515,38 +515,38 @@ void Tetris::DrawIntro()
 	//BUG?:  text cant be translatef'd in Z space 
 	//Note for Future Me:  wasnt a bug, gluPerspective (depreciated) was not set properly
 	// see GL_Base.hpp for getting perspective with glm
-	glTranslatef(0.f,0.f, -25.0f);
+	glTranslatef(0.f,0.f, -5.0f);
 
 	glColor3f (1.0f, 1.0f, 1.0f);
 
-	glRasterPos2f (-0.5f, 0.8f);
-	//glRasterPos2f (-1.1f, 1.0f);
+	//glRasterPos2f (-0.5f, 0.8f);
+	glRasterPos2f (-1.1f, 1.0f);
 	freetype_mod::print(myfont, "Original concept, design,");
 
-	glRasterPos2f (-0.3f, 0.6f);
-	//glRasterPos2f (-0.4f, 0.8f);
+	//glRasterPos2f (-0.3f, 0.6f);
+	glRasterPos2f (-0.4f, 0.8f);
 	freetype_mod::print(myfont, "and program");
 
-	glRasterPos2f (-0.45f, 0.4f);
-	//glRasterPos2f (-0.8f, 0.6f);
+	//glRasterPos2f (-0.45f, 0.4f);
+	glRasterPos2f (-0.8f, 0.6f);
 	freetype_mod::print(myfont, "by Alexey Pazhitnov");
 
 	//glRasterPos2f (-0.1f, 0.2f);
 	glRasterPos2f (-0.1f, 0.4f);
 	freetype_mod::print(myfont, "1987");
 
-	glRasterPos2f (-0.4f, -0.2f);
-	//glRasterPos2f (-0.65f, -0.8f);
+	//glRasterPos2f (-0.4f, -0.2f);
+	glRasterPos2f (-0.65f, -0.8f);
 	freetype_mod::print(myfont, "This incarnation");
 
-	glRasterPos2f (-0.35f, -0.4f);
-	//glRasterPos2f (-0.6f, -1.0f);
+	//glRasterPos2f (-0.35f, -0.4f);
+	glRasterPos2f (-0.6f, -1.0f);
 	freetype_mod::print(myfont, "by Dan Peschman");
 
-	//glRasterPos2f (-0.1f, -0.6f);
-	//freetype_mod::print(myfont,"2002");
-
 	glRasterPos2f (-0.1f, -1.2f);
+	freetype_mod::print(myfont,"2002");
+
+	glRasterPos2f (-1.5f, -2.0f);
 	freetype_mod::print(myfont,"SDL Port by Jim Gorz (c) 2022");
 
 }
