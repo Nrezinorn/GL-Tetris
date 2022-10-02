@@ -968,8 +968,9 @@ void Tetris::GameEventHandler ()
 			setGameState(STATE_HIGHSCORES);
 
 		// Stop music and unload the band
-		//todo music
 		//pPerformance->Stop( NULL, NULL, 0, 0 );
+		Mix_HaltMusic();
+
 		//if (musicType < 3)
 		///	pMusic[musicType]->Unload( pPerformance );
 	}
