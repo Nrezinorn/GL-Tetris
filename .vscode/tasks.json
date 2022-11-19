@@ -8,7 +8,6 @@
         "args": [
             "-g",
             "src/*.cpp",
-            //"src/Tetris/*.cpp",
             "-DDEBUG",
             "-fpermissive",
             "-I${env:MINGW_INCLUDE_PATH}",
@@ -18,9 +17,6 @@
             "-lSDL2main",
             "-lSDL2",
             "-lSDL2_Mixer",
-            //"-lgl",
-            //"-lglew32",
-            "-lfreeglut",
             "-lopengl32",
             "-lfreetype",
             "-o",
