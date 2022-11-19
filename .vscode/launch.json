@@ -4,35 +4,11 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        /*
         {
-            "name": "OSX Debug",
-            "type": "lldb",
-            "request": "launch",
-            "program": "${workspaceFolder}/\GLTetris2022.bin",
-            "args": [],
-            "logging":{ 
-                "trace":true,
-                "traceResponse":true,
-                "engineLogging":true,
-                "programOutput":true,
-       
-             },
-            "stopAtEntry": true,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "osx": {
-                "MIMode": "lldb"
-            },
-        }
-        */
-        
-        {
-            "name": "Windows Debug",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/GLTetris2022.exe",
+            "name": "Launch Debugger",
+            "program": "dummy.exe",  // this is not used but squelches parse errors
+            "request": "launch", 
+            "type": "cppdbg",   // this is overridden but squelches parse errors
             "args": [],
             "logging":{ 
                 "trace":true,
@@ -46,16 +22,28 @@
             "environment": [],
             "externalConsole": false,
             "windows": {
-                "MIMode": "gdb"
+                "MIMode": "gdb",
+                "name": "Windows Debug",
+                "type": "cppdbg",
+                "request": "launch",
+                "program": "${workspaceFolder}/GLTetris2022.exe",
+                "miDebuggerPath": "${env:MINGW_BIN_PATH}/gdb.exe",
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    }
+                ],
             },
-            "miDebuggerPath": "${env:MINGW_BIN_PATH}/gdb.exe",
-            "setupCommands": [
-              {
-                "description": "Enable pretty-printing for gdb",
-                "text": "-enable-pretty-printing",
-                "ignoreFailures": true
-              }
-            ],
+            "osx": {
+                "MIMode": "lldb",
+                "name": "OSX Debug",
+                "type": "lldb",
+                "request": "launch",
+                "program": "${workspaceFolder}/GLTetris2022.bin",
+            },
+           
         }
     ]
 }
