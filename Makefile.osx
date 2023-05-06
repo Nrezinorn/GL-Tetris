@@ -1,10 +1,27 @@
 CXX = g++
-
 CXXFLAGS = -w -Wall -g -DDEBUG -F/Library/Frameworks -I/usr/local/include/glm -I/usr/local/include/freetype2
 LDFLAGS = -framework SDL2 -framework SDL2_mixer -framework OpenGL -framework cocoa  `freetype-config --libs`
 
-main: src/main.cpp
-	${CXX} ${CXXFLAGS} ${LDFLAGS} -o GLTetris2022.bin src/*.cpp
+PROG=GLTetris2022.bin
+
+#give up on object files in a folder of their own for now
+OBJDIR=obj
+
+src = $(wildcard src/*.cpp) \
+	$(wildcard src/Tetris/*.cpp)
+obj = $(src:.cpp=.o)
+dep = $(obj:.o=.d)
+
+#http://nuclear.mutantstargoat.com/articles/make/  
+# buy this guy a beer or soda
+
+all:  $(PROG) 
+
+$(PROG): $(obj)
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS)
+
 .PHONY: clean
+
 clean:
-	rm GLTetris2022.bin
+	rm -f $(obj)
+	rm -f $(PROG)
