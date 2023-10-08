@@ -9,10 +9,13 @@ mkdir -p GLTetris.app/Contents/Resources
 mkdir -p GLTetris.app/Contents/Library/Frameworks
 cp -v Info.plist GLTetris.app/Contents/Info.plist
 
+# copy executable
+cp -v *.bin GLTetris.app/Contents/MacOS
+
 #resource copy
 cp -r sound GLTetris.app/Contents/Resources
 cp -r music GLTetris.app/Contents/Resources
-cp *.ttf GLTetris.app/Contents/Resources
+cp -v *.ttf GLTetris.app/Contents/Resources
 
 #linker stuff here lol
 # We use SDL2 and SDL2_mixer so setup and copy the dylib file to

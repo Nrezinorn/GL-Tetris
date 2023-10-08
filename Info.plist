@@ -7,13 +7,13 @@
   <key>CFBundleExecutable</key>
   <string>GLTetris2022.bin</string>
   <key>CFBundleIdentifier</key>
-  <string>com.your-company-name.www</string>
+  <string>com.enigmastudiosllc.www</string>
   <key>CFBundleName</key>
-  <string>foo</string>
+  <string>GLTetris</string>
   <key>CFBundleIconFile</key>
   <string>foo.icns</string>
   <key>CFBundleShortVersionString</key>
-  <string>0.01</string>
+  <string>0.5</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundlePackageType</key>
