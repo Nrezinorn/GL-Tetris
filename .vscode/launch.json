@@ -43,7 +43,20 @@
                 "request": "launch",
                 "program": "${workspaceFolder}/GLTetris2022.bin",
             },
-           
+            "linux": {
+                "MIMode": "gdb",
+                "name": "Linux Debug",
+                "type": "cppdbg",
+                "request": "launch",
+                "program": "${workspaceFolder}/GLTetris2022.bin",
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    }
+                ],
+            }
         }
     ]
 }

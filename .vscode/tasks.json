@@ -2,29 +2,35 @@
     "version": "2.0.0",
     "tasks": [
     {
-        "label": "Windows Build (Debug)",
+        "label": "Make Debug",
         "type": "shell",
-        "command": "g++",
-        "args": [
-            "-g",
-            "src/*.cpp",
-            "-DDEBUG",
-            "-fpermissive",
-            "-I${env:MINGW_INCLUDE_PATH}",
-            "-I${env:MINGW_INCLUDE_PATH}\\freetype2",
-            "-L${env:MINGW_LIB_PATH}",
-            "-lmingw32",
-            "-lSDL2main",
-            "-lSDL2",
-            "-lSDL2_Mixer",
-            "-lopengl32",
-            "-lfreetype",
-            "-o",
-            "GLTetris2022.exe"
-        ],
-        "problemMatcher": [
-            "$gcc"
-        ],
-        "group": "build"
+        "group": "build",
+        "windows": {
+            "command": "g++",
+            "args": [
+                "-g",
+                "src/*.cpp",
+                "-DDEBUG",
+                "-fpermissive",
+                "-I${env:MINGW_INCLUDE_PATH}",
+                "-I${env:MINGW_INCLUDE_PATH}\\freetype2",
+                "-L${env:MINGW_LIB_PATH}",
+                "-lmingw32",
+                "-lSDL2main",
+                "-lSDL2",
+                "-lSDL2_Mixer",
+                "-lopengl32",
+                "-lfreetype",
+                "-o",
+                "GLTetris2022.exe"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+        },
+        "linux": {
+            "type": "shell",
+            "command": "make",
+        },
     }]
 }

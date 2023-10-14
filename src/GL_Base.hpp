@@ -3,12 +3,12 @@
 
 #include <SDL2/SDL_opengl.h>
 
-#ifdef __APPLE__
+#ifdef __APPLE__ | __LINUX__
 #include <glm.hpp>
 #include <ext.hpp>
 #else
-#include <glm\vec4.hpp>
-#include <glm\ext.hpp>
+#include <vec4.hpp>
+#include <ext.hpp>
 #endif
 
 float LightAmbient[]  =	{ 0.5f, 0.5f, 0.5f, 1.0f };
